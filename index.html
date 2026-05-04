@@ -13,38 +13,52 @@
   <main class="app">
 
     <!-- Page 1 欢迎页 -->
-    <section id="page-welcome" class="page active welcome-page">
+    <section id="page-welcome" class="page active welcome-page" aria-labelledby="welcomeTitle">
       <div class="page-content">
-        <h1 class="main-title">专注15分钟，认养一条鱼</h1>
-        <p class="sub-text">点击任意地方开启</p>
+        <h1 id="welcomeTitle" class="main-title">专注15分钟，认养一条鱼</h1>
+        <button id="enterAppBtn" class="welcome-start-btn" type="button">开始认养</button>
       </div>
     </section>
 
     <!-- Page 2 输入页 -->
-    <section id="page-input" class="page input-page">
+    <section id="page-input" class="page input-page" aria-labelledby="inputTitle">
       <div class="page-content card">
+        <h2 id="inputTitle" class="sr-only">设置本次专注</h2>
+        <label class="sr-only" for="taskInput">本次专注目标</label>
         <input
           id="taskInput"
           class="task-input"
           type="text"
           placeholder="在此输入专注内容，例如看书、洗澡、小憩"
+          autocomplete="off"
+          aria-describedby="inputMessage"
         />
-        <p class="time-text">15分钟</p>
+        <p id="inputMessage" class="input-message" aria-live="polite"></p>
+        <p class="time-text">选择一段小鱼陪你的时间</p>
+        <div class="duration-options" aria-label="选择专注时长">
+          <button class="duration-btn active" type="button" data-duration="15" aria-pressed="true">15分钟</button>
+          <button class="duration-btn" type="button" data-duration="25" aria-pressed="false">25分钟</button>
+          <button class="duration-btn" type="button" data-duration="50" aria-pressed="false">50分钟</button>
+        </div>
         <button id="startBtn" class="primary-btn">开始</button>
       </div>
     </section>
 
     <!-- Page 3 计时页 -->
-    <section id="page-timer" class="page timer-page">
+    <section id="page-timer" class="page timer-page" aria-labelledby="timerDisplay">
       <div class="page-content">
         <p id="timerTaskText" class="timer-task"></p>
-        <h2 id="timerDisplay" class="timer-display">15:00</h2>
-        <p class="timer-tip">小鱼溯游中</p>
+        <h2 id="timerDisplay" class="timer-display" role="timer" aria-live="polite">15:00</h2>
+        <p id="timerTip" class="timer-tip" aria-live="polite">不用着急，小鱼正在安静地陪你游。</p>
+        <div class="timer-controls" aria-label="计时控制">
+          <button id="pauseResumeBtn" class="timer-btn" type="button">暂停</button>
+          <button id="resetBtn" class="timer-btn quiet" type="button">重置</button>
+        </div>
       </div>
     </section>
 
     <!-- Page 4 获得鱼页 -->
-    <section id="page-reward" class="page reward-page">
+    <section id="page-reward" class="page reward-page" aria-labelledby="rewardFishName">
       <div class="page-content reward-card">
         <p class="reward-title">恭喜你获得了一条鱼</p>
         <div id="rewardFishImage" class="reward-fish">🐟</div>
@@ -52,30 +66,78 @@
         <p id="rewardFishDesc" class="reward-fish-desc">
           小小一只，却总把尾巴撑得很认真。
         </p>
-        <p class="reward-tip">点击任意地方将鱼放入鱼缸</p>
+        <button id="placeFishBtn" class="reward-place-btn" type="button">放入鱼缸</button>
       </div>
     </section>
 
     <!-- Page 5 入缸完成页 -->
-    <section id="page-tank" class="page tank-page">
+    <section id="page-tank" class="page tank-page" aria-labelledby="tankTitle">
       <div class="top-icons">
-        <button class="icon-btn" aria-label="声音">🔊</button>
-        <button class="icon-btn" aria-label="分享">📤</button>
+        <button id="focusAgainBtn" class="return-focus-btn" type="button">再次专注</button>
+        <button class="icon-btn" type="button" aria-label="声音开关">🔊</button>
+        <button class="icon-btn" type="button" aria-label="分享鱼缸">📤</button>
       </div>
 
       <div class="page-content">
-       <div class="tank-room">
-         <div id="small-tank-0" class="tank small-tank">小缸 1</div>
-         <div id="small-tank-1" class="tank small-tank">小缸 2</div>
-         <div id="small-tank-2" class="tank small-tank">小缸 3</div>
-         <div id="small-tank-3" class="tank small-tank">小缸 4</div>
-         <div id="small-tank-4" class="tank small-tank">小缸 5</div>
-         <div id="small-tank-5" class="tank small-tank">小缸 6</div>
+        <h2 id="tankTitle" class="sr-only">我的专注鱼缸</h2>
+        <div class="tank-stats" aria-label="专注统计">
+          <div class="stat-item">
+            <span class="stat-label">今日次数</span>
+            <strong id="todaySessionsStat" class="stat-value" aria-live="polite">0</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">今日分钟</span>
+            <strong id="todayMinutesStat" class="stat-value" aria-live="polite">0</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">收集小鱼</span>
+            <strong id="totalFishStat" class="stat-value" aria-live="polite">0</strong>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">鱼缸容量</span>
+            <strong id="tankCapacityStat" class="stat-value" aria-live="polite">0/9</strong>
+          </div>
+        </div>
 
-         <div id="large-tank-0" class="tank large-tank">大缸 1</div>
-         <div id="large-tank-1" class="tank large-tank">大缸 2</div>
-         <div id="large-tank-2" class="tank large-tank">大缸 3</div>
-     </div>
+        <div class="tank-room" aria-label="鱼缸列表">
+          <div id="small-tank-0" class="tank small-tank">小缸 1</div>
+          <div id="small-tank-1" class="tank small-tank">小缸 2</div>
+          <div id="small-tank-2" class="tank small-tank">小缸 3</div>
+          <div id="small-tank-3" class="tank small-tank">小缸 4</div>
+          <div id="small-tank-4" class="tank small-tank">小缸 5</div>
+          <div id="small-tank-5" class="tank small-tank">小缸 6</div>
+
+          <div id="large-tank-0" class="tank large-tank">大缸 1</div>
+          <div id="large-tank-1" class="tank large-tank">大缸 2</div>
+          <div id="large-tank-2" class="tank large-tank">大缸 3</div>
+        </div>
+      </div>
+
+      <div id="fishHistoryModal" class="fish-history-modal" aria-hidden="true">
+        <div class="fish-history-card" role="dialog" aria-modal="true" aria-labelledby="fishHistoryTitle" aria-describedby="fishHistoryDesc">
+          <button id="closeFishHistoryBtn" class="history-close-btn" type="button" aria-label="关闭">×</button>
+          <p class="history-label">专注记录</p>
+          <h3 id="fishHistoryTitle" class="history-title"></h3>
+          <p id="fishHistoryDesc" class="history-desc"></p>
+          <dl class="history-list">
+            <div>
+              <dt>专注内容</dt>
+              <dd id="historyTask"></dd>
+            </div>
+            <div>
+              <dt>获得日期</dt>
+              <dd id="historyDate"></dd>
+            </div>
+            <div>
+              <dt>获得时间</dt>
+              <dd id="historyTime"></dd>
+            </div>
+            <div>
+              <dt>专注时间</dt>
+              <dd id="historyDuration"></dd>
+            </div>
+          </dl>
+        </div>
       </div>
     </section>
 
