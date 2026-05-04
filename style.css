@@ -496,6 +496,62 @@ button:focus-visible,
   margin: 42px auto 8px;
 }
 
+.aquarium-view-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  max-width: 980px;
+  margin: 14px auto 0;
+}
+
+.aquarium-view-btn,
+.month-filter-select {
+  border: 3px solid rgba(95, 63, 43, 0.18);
+  border-radius: 6px;
+  background: rgba(255, 250, 242, 0.76);
+  color: var(--wood-dark);
+  font-family: "ZpixCN", sans-serif;
+  font-size: 0.6rem;
+  line-height: 1.8;
+}
+
+.aquarium-view-btn {
+  min-width: 98px;
+  padding: 9px 10px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 rgba(95, 63, 43, 0.1);
+}
+
+.aquarium-view-btn:hover,
+.aquarium-view-btn.active {
+  background: var(--pixel-blue);
+  border-color: var(--pixel-blue-deep);
+  color: #234052;
+}
+
+.month-filter-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7c6f61;
+  font-family: "ZpixCN", sans-serif;
+  font-size: 0.6rem;
+  line-height: 1.8;
+}
+
+.month-filter-select {
+  min-width: 86px;
+  padding: 9px 8px;
+}
+
+.month-filter-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
+}
+
 .stat-item {
   min-height: 74px;
   padding: 12px 10px;
@@ -743,6 +799,15 @@ button:focus-visible,
 
   .aquarium-stage {
     min-height: 430px;
+  }
+
+  .aquarium-view-controls {
+    justify-content: stretch;
+  }
+
+  .aquarium-view-btn,
+  .month-filter-label {
+    flex: 1 1 42%;
   }
 }
 

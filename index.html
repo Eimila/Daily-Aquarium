@@ -82,11 +82,11 @@
         <h2 id="tankTitle" class="sr-only">我的专注鱼缸</h2>
         <div class="tank-stats" aria-label="专注统计">
           <div class="stat-item">
-            <span class="stat-label">今日次数</span>
+            <span class="stat-label">专注次数</span>
             <strong id="todaySessionsStat" class="stat-value" aria-live="polite">0</strong>
           </div>
           <div class="stat-item">
-            <span class="stat-label">今日分钟</span>
+            <span class="stat-label">专注分钟</span>
             <strong id="todayMinutesStat" class="stat-value" aria-live="polite">0</strong>
           </div>
           <div class="stat-item">
@@ -97,6 +97,17 @@
             <span class="stat-label">水族馆</span>
             <strong id="tankCapacityStat" class="stat-value" aria-live="polite">0条</strong>
           </div>
+        </div>
+
+        <div class="aquarium-view-controls" aria-label="切换鱼缸时间范围">
+          <button class="aquarium-view-btn active" type="button" data-view-mode="today" aria-pressed="true">今日鱼缸</button>
+          <button class="aquarium-view-btn" type="button" data-view-mode="week" aria-pressed="false">本周鱼缸</button>
+          <button class="aquarium-view-btn" type="button" data-view-mode="month" aria-pressed="false">本月鱼缸</button>
+          <button class="aquarium-view-btn" type="button" data-view-mode="year" aria-pressed="false">本年鱼缸</button>
+          <label class="month-filter-label" for="aquariumMonthSelect">
+            <span>月份</span>
+            <select id="aquariumMonthSelect" class="month-filter-select" aria-label="选择月份"></select>
+          </label>
         </div>
 
         <div id="aquariumStage" class="aquarium-stage" aria-label="水族馆中的小鱼">

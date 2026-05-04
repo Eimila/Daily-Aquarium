@@ -77,6 +77,8 @@ const totalFishStat = document.getElementById("totalFishStat");
 const tankCapacityStat = document.getElementById("tankCapacityStat");
 const aquariumStage = document.getElementById("aquariumStage");
 const aquariumEmptyState = document.getElementById("aquariumEmptyState");
+const aquariumViewButtons = document.querySelectorAll(".aquarium-view-btn");
+const aquariumMonthSelect = document.getElementById("aquariumMonthSelect");
 const TEST_DURATION_SECONDS = 5;
 const focusMessages = {
   emptyTask: "先写下一件小小的事吧，只要一件就好。",
@@ -105,6 +107,8 @@ let sessionHistory = [];
 let hasClaimedToday = false;
 let lastClaimDate = "";
 let lastFocusedElement = null;
+let aquariumViewMode = "today";
+let selectedAquariumMonth = new Date().getMonth();
 
 function showPage(pageName) {
   Object.values(pages).forEach((page) => page.classList.remove("active"));
@@ -182,6 +186,38 @@ focusAgainBtn.addEventListener("click", () => {
   timeLeft = selectedDurationSeconds;
   updateTimerDisplay();
   showPage("input");
+});
+
+aquariumViewButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    aquariumViewMode = button.dataset.viewMode;
+
+    aquariumViewButtons.forEach((item) => {
+      item.classList.remove("active");
+      item.setAttribute("aria-pressed", "false");
+    });
+
+    button.classList.add("active");
+    button.setAttribute("aria-pressed", "true");
+    updateMonthFilterState();
+    renderTanks();
+    renderTankStats();
+  });
+});
+
+aquariumMonthSelect.addEventListener("change", () => {
+  selectedAquariumMonth = Number(aquariumMonthSelect.value);
+  aquariumViewMode = "month";
+
+  aquariumViewButtons.forEach((item) => {
+    const isMonthButton = item.dataset.viewMode === "month";
+    item.classList.toggle("active", isMonthButton);
+    item.setAttribute("aria-pressed", String(isMonthButton));
+  });
+
+  updateMonthFilterState();
+  renderTanks();
+  renderTankStats();
 });
 
 function getRandomFish() {
@@ -311,6 +347,91 @@ function getDateStringFromIso(isoString) {
   return `${year}-${month}-${day}`;
 }
 
+function getStartOfWeek(date) {
+  const start = new Date(date);
+  const day = start.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  start.setDate(start.getDate() + diff);
+  start.setHours(0, 0, 0, 0);
+  return start;
+}
+
+function isSameDay(date, compareDate) {
+  return date.getFullYear() === compareDate.getFullYear()
+    && date.getMonth() === compareDate.getMonth()
+    && date.getDate() === compareDate.getDate();
+}
+
+function isFishInCurrentAquariumView(fish) {
+  const earnedDate = new Date(fish.earnedAt);
+
+  if (Number.isNaN(earnedDate.getTime())) {
+    return false;
+  }
+
+  const now = new Date();
+
+  if (aquariumViewMode === "today") {
+    return isSameDay(earnedDate, now);
+  }
+
+  if (aquariumViewMode === "week") {
+    const startOfWeek = getStartOfWeek(now);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 7);
+    return earnedDate >= startOfWeek && earnedDate < endOfWeek;
+  }
+
+  if (aquariumViewMode === "month") {
+    return earnedDate.getFullYear() === now.getFullYear()
+      && earnedDate.getMonth() === selectedAquariumMonth;
+  }
+
+  if (aquariumViewMode === "year") {
+    return earnedDate.getFullYear() === now.getFullYear();
+  }
+
+  return true;
+}
+
+function getVisibleAquariumFish() {
+  return aquariumFish
+    .map((entry, originalIndex) => ({
+      ...normalizeTankFishRecord(entry),
+      originalIndex
+    }))
+    .filter(isFishInCurrentAquariumView);
+}
+
+function getAquariumViewLabel() {
+  const monthLabel = `${selectedAquariumMonth + 1}月`;
+  const labels = {
+    today: "今日鱼缸",
+    week: "本周鱼缸",
+    month: `${monthLabel}鱼缸`,
+    year: "本年鱼缸"
+  };
+
+  return labels[aquariumViewMode] || "当前鱼缸";
+}
+
+function updateMonthFilterState() {
+  aquariumMonthSelect.disabled = aquariumViewMode !== "month";
+}
+
+function populateMonthFilter() {
+  const monthNames = [
+    "1月", "2月", "3月", "4月", "5月", "6月",
+    "7月", "8月", "9月", "10月", "11月", "12月"
+  ];
+
+  aquariumMonthSelect.innerHTML = monthNames.map((monthName, index) => {
+    return `<option value="${index}">${monthName}</option>`;
+  }).join("");
+  aquariumMonthSelect.value = String(selectedAquariumMonth);
+  updateMonthFilterState();
+}
+
 function resetDailyStatusIfNeeded() {
   const today = getTodayString();
 
@@ -340,16 +461,17 @@ function migrateTanksToAquariumFish() {
 }
 
 function renderTanks() {
-  const fishRecords = aquariumFish.map(normalizeTankFishRecord);
+  const fishRecords = getVisibleAquariumFish();
 
   aquariumEmptyState.hidden = fishRecords.length > 0;
+  aquariumEmptyState.textContent = `${getAquariumViewLabel()}还很安静。完成一次专注后，小鱼会出现在这里。`;
   aquariumStage.querySelectorAll(".aquarium-fish").forEach((fishEl) => fishEl.remove());
 
   fishRecords.forEach((fish, index) => {
     const fishButton = document.createElement("button");
     fishButton.className = `aquarium-fish fish-history-trigger ${fish.size === "small" ? "aquarium-fish-small" : "aquarium-fish-medium"}`;
     fishButton.type = "button";
-    fishButton.dataset.fishIndex = String(index);
+    fishButton.dataset.fishIndex = String(fish.originalIndex);
     fishButton.style.left = `${fish.x}%`;
     fishButton.style.top = `${fish.y}%`;
     fishButton.style.setProperty("--swim-delay", `${(index % 6) * 0.35}s`);
@@ -374,7 +496,7 @@ function getUniqueCollectedFishCount() {
 }
 
 function getTotalCollectedFishCount() {
-  return getAquariumFishCount();
+  return getVisibleAquariumFish().length;
 }
 
 function getTodaySessions() {
@@ -386,15 +508,20 @@ function getTodaySessions() {
 }
 
 function renderTankStats() {
-  const todaySessions = getTodaySessions();
-  const todayMinutes = todaySessions.reduce((total, session) => {
+  const visibleFish = getVisibleAquariumFish();
+  const visibleSessionIds = new Set(visibleFish.map((fish) => fish.sessionId));
+  const visibleSessions = sessionHistory.filter((session) => {
+    return visibleSessionIds.has(session.id);
+  });
+  const visibleMinutes = visibleSessions.reduce((total, session) => {
     return total + Number(session.durationMinutes || 0);
   }, 0);
+  const visibleUniqueIds = new Set(visibleFish.map((fish) => fish.fishId));
 
-  todaySessionsStat.textContent = String(todaySessions.length);
-  todayMinutesStat.textContent = String(todayMinutes);
+  todaySessionsStat.textContent = String(visibleSessions.length);
+  todayMinutesStat.textContent = String(visibleMinutes);
   totalFishStat.textContent = String(getTotalCollectedFishCount());
-  tankCapacityStat.textContent = `${getUniqueCollectedFishCount()}种`;
+  tankCapacityStat.textContent = `${visibleUniqueIds.size}种`;
 }
 
 function getTankFishByTrigger(trigger) {
@@ -608,6 +735,7 @@ loadGameData();
 resetDailyStatusIfNeeded();
 timeLeft = selectedDurationSeconds;
 migrateTanksToAquariumFish();
+populateMonthFilter();
 renderTanks();
 renderTankStats();
 saveGameData();
