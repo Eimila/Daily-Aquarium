@@ -527,162 +527,113 @@ button:focus-visible,
   line-height: 1.6;
 }
 
-/* ===== 鱼缸区域 ===== */
-.tank-room {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
+/* ===== 水族馆区域 ===== */
+.aquarium-stage {
+  position: relative;
   width: 100%;
   max-width: 980px;
-  margin: 0 auto;
-  padding-top: 18px;
-}
-
-.tank {
-  position: relative;
-  border-radius: 10px;
-  border: 4px solid rgba(162, 198, 219, 0.95);
-  background: linear-gradient(
-    to bottom,
-    rgba(231, 242, 248, 0.82),
-    rgba(190, 220, 234, 0.42)
-  );
+  min-height: 520px;
+  margin: 18px auto 0;
+  border: 5px solid rgba(162, 198, 219, 0.95);
+  border-radius: 8px;
+  background:
+    radial-gradient(circle at 22% 24%, rgba(255, 255, 255, 0.22), transparent 18%),
+    linear-gradient(
+      to bottom,
+      rgba(226, 244, 250, 0.96),
+      rgba(167, 217, 235, 0.72) 54%,
+      rgba(119, 184, 213, 0.72)
+    );
   box-shadow:
-    inset 0 3px 0 rgba(255, 255, 255, 0.5),
-    inset 0 -14px 18px rgba(120, 180, 210, 0.08),
-    8px 8px 0 rgba(95, 63, 43, 0.12);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    inset 0 5px 0 rgba(255, 255, 255, 0.46),
+    inset 0 -28px 36px rgba(47, 105, 135, 0.12),
+    10px 10px 0 rgba(95, 63, 43, 0.13);
   overflow: hidden;
-  padding: 12px;
 }
 
-.tank::before {
+.aquarium-stage::before {
   content: "";
   position: absolute;
-  top: 12px;
-  left: 16px;
-  width: 30%;
-  height: 12px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
+  inset: 0;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.24) 1px, transparent 1px);
+  background-size: 72px 72px;
+  opacity: 0.42;
+  animation: driftBg 18s linear infinite;
   pointer-events: none;
 }
 
-.tank::after {
+.aquarium-stage::after {
   content: "";
   position: absolute;
+  right: 0;
   bottom: 0;
   left: 0;
-  width: 100%;
-  height: 22%;
-  background: rgba(219, 199, 156, 0.42);
+  height: 18%;
+  background:
+    linear-gradient(to right, rgba(219, 199, 156, 0.5), rgba(207, 188, 143, 0.64));
   pointer-events: none;
 }
 
-.small-tank {
-  height: 170px;
-}
-
-.large-tank {
-  height: 220px;
-}
-
-/* ===== 空缸 ===== */
-.tank-empty {
-  width: 62%;
-  height: 48%;
-  border: 3px dashed rgba(140, 170, 190, 0.22);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  position: relative;
+.aquarium-empty-state {
+  position: absolute;
+  top: 50%;
+  left: 50%;
   z-index: 2;
+  width: min(480px, 74%);
+  transform: translate(-50%, -50%);
+  border: 3px dashed rgba(90, 130, 150, 0.24);
+  border-radius: 8px;
+  padding: 24px 20px;
+  color: rgba(92, 83, 75, 0.72);
+  font-family: "ZpixCN", sans-serif;
+  font-size: 0.68rem;
+  line-height: 2;
 }
 
-/* ===== 单鱼 ===== */
-.fish-single {
+.aquarium-fish {
+  position: absolute;
+  z-index: 3;
   border: none;
   background: transparent;
   padding: 0;
   cursor: pointer;
-  position: relative;
-  z-index: 2;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.08));
-  animation: floatFish 3.4s ease-in-out infinite;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.1));
 }
 
-.tank-fish-img {
+.aquarium-fish-img {
+  --fish-scale: 1;
   display: block;
+  width: auto;
   image-rendering: pixelated;
   object-fit: contain;
+  animation: aquariumSwim 4.2s ease-in-out infinite;
+  animation-delay: var(--swim-delay);
 }
 
-.single-img {
-  width: auto;
-  max-width: 46%;
-  max-height: 58%;
+.aquarium-fish-medium .aquarium-fish-img {
+  max-width: 82px;
+  max-height: 58px;
 }
 
-/* ===== 群鱼 ===== */
-.fish-group {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 18px;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  max-width: 180px;
+.aquarium-fish-small .aquarium-fish-img {
+  max-width: 58px;
+  max-height: 40px;
 }
 
-.fish-group-item {
-  border: none;
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  filter: drop-shadow(0 3px 2px rgba(0, 0, 0, 0.08));
-  animation: floatFish 3s ease-in-out infinite;
+.aquarium-fish.swim-left .aquarium-fish-img {
+  --fish-scale: -1;
 }
 
-.group-img {
-  width: auto;
-  max-width: 46px;
-  max-height: 34px;
+.fish-history-trigger:hover .aquarium-fish-img,
+.fish-history-trigger:focus-visible .aquarium-fish-img {
+  filter: brightness(1.08);
 }
 
-.fish-group-item:nth-child(2) {
-  animation-delay: 0.4s;
-}
-
-.fish-group-item:nth-child(3) {
-  animation-delay: 0.8s;
-}
-
-.fish-group-item:nth-child(4) {
-  animation-delay: 1.2s;
-}
-
-.fish-group-item:nth-child(5) {
-  animation-delay: 1.6s;
-}
-
-.fish-group-item:nth-child(6) {
-  animation-delay: 2s;
-}
-
-.fish-history-trigger:hover .tank-fish-img,
-.fish-history-trigger:focus-visible .tank-fish-img {
-  transform: scale(1.08);
+.fish-history-trigger.swim-left:hover .aquarium-fish-img,
+.fish-history-trigger.swim-left:focus-visible .aquarium-fish-img {
+  filter: brightness(1.08);
 }
 
 .fish-history-trigger:focus-visible {
@@ -790,8 +741,8 @@ button:focus-visible,
     margin-top: 76px;
   }
 
-  .tank-room {
-    grid-template-columns: 1fr;
+  .aquarium-stage {
+    min-height: 430px;
   }
 }
 
@@ -822,6 +773,24 @@ button:focus-visible,
   }
   100% {
     transform: translate(0px, 0px);
+  }
+}
+
+@keyframes aquariumSwim {
+  0% {
+    transform: scaleX(var(--fish-scale)) translate(0, 0);
+  }
+  25% {
+    transform: scaleX(var(--fish-scale)) translate(10px, -6px);
+  }
+  50% {
+    transform: scaleX(var(--fish-scale)) translate(4px, -12px);
+  }
+  75% {
+    transform: scaleX(var(--fish-scale)) translate(-8px, -4px);
+  }
+  100% {
+    transform: scaleX(var(--fish-scale)) translate(0, 0);
   }
 }
 

@@ -75,6 +75,8 @@ const todaySessionsStat = document.getElementById("todaySessionsStat");
 const todayMinutesStat = document.getElementById("todayMinutesStat");
 const totalFishStat = document.getElementById("totalFishStat");
 const tankCapacityStat = document.getElementById("tankCapacityStat");
+const aquariumStage = document.getElementById("aquariumStage");
+const aquariumEmptyState = document.getElementById("aquariumEmptyState");
 const TEST_DURATION_SECONDS = 5;
 const focusMessages = {
   emptyTask: "先写下一件小小的事吧，只要一件就好。",
@@ -97,6 +99,7 @@ let tanks = {
   small: [null, null, null, null, null, null],
   large: [[], [], []]
 };
+let aquariumFish = [];
 let collectedFishIds = [];
 let sessionHistory = [];
 let hasClaimedToday = false;
@@ -217,6 +220,8 @@ function saveCompletedSession() {
 }
 
 function createTankFishRecord(fish) {
+  const position = getAquariumFishPosition(aquariumFish.length);
+
   return {
     fishId: fish.id,
     name: fish.name,
@@ -226,7 +231,11 @@ function createTankFishRecord(fish) {
     sessionId: currentSessionRecord ? currentSessionRecord.id : "",
     earnedAt: currentSessionRecord ? currentSessionRecord.date : new Date().toISOString(),
     durationMinutes: currentSessionRecord ? currentSessionRecord.durationMinutes : selectedDurationMinutes,
-    task: currentSessionRecord ? currentSessionRecord.task : currentTask
+    task: currentSessionRecord ? currentSessionRecord.task : currentTask,
+    x: position.x,
+    y: position.y,
+    size: fish.type === "group" ? "small" : "medium",
+    direction: position.direction
   };
 }
 
@@ -244,7 +253,11 @@ function normalizeTankFishRecord(entry) {
     sessionId: entry.sessionId || "",
     earnedAt: entry.earnedAt || entry.date || "",
     durationMinutes: entry.durationMinutes || "",
-    task: entry.task || ""
+    task: entry.task || "",
+    x: typeof entry.x === "number" ? entry.x : 50,
+    y: typeof entry.y === "number" ? entry.y : 50,
+    size: entry.size || (entry.type === "group" ? "small" : "medium"),
+    direction: entry.direction || "right"
   };
 }
 
@@ -254,26 +267,27 @@ function getTankFishLabel(entry) {
   return `查看${fish.name}的专注记录${taskText}`;
 }
 
+function getAquariumFishPosition(index) {
+  const positions = [
+    { x: 18, y: 34, direction: "right" },
+    { x: 38, y: 58, direction: "left" },
+    { x: 62, y: 28, direction: "right" },
+    { x: 78, y: 50, direction: "left" },
+    { x: 28, y: 72, direction: "right" },
+    { x: 52, y: 42, direction: "left" },
+    { x: 72, y: 74, direction: "right" },
+    { x: 14, y: 56, direction: "left" },
+    { x: 46, y: 78, direction: "right" },
+    { x: 84, y: 30, direction: "left" },
+    { x: 34, y: 26, direction: "right" },
+    { x: 64, y: 62, direction: "left" }
+  ];
+
+  return positions[index % positions.length];
+}
+
 function placeFishIntoTank(fish) {
-  const tankFishRecord = createTankFishRecord(fish);
-
-  if (fish.type === "single") {
-    for (let i = 0; i < tanks.small.length; i++) {
-      if (tanks.small[i] === null) {
-        tanks.small[i] = tankFishRecord;
-        return;
-      }
-    }
-  }
-
-  if (fish.type === "group") {
-    for (let i = 0; i < tanks.large.length; i++) {
-      if (tanks.large[i].length === 0) {
-        tanks.large[i] = [tankFishRecord, tankFishRecord, tankFishRecord];
-        return;
-      }
-    }
-  }
+  aquariumFish.push(createTankFishRecord(fish));
 }
 
 function getTodayString() {
@@ -305,57 +319,62 @@ function resetDailyStatusIfNeeded() {
   }
 }
 
+function migrateTanksToAquariumFish() {
+  if (aquariumFish.length > 0) return;
+
+  const legacyFish = [
+    ...tanks.small.filter(Boolean),
+    ...tanks.large.flat().filter(Boolean)
+  ];
+
+  aquariumFish = legacyFish.map((entry, index) => {
+    const fish = normalizeTankFishRecord(entry);
+    const position = getAquariumFishPosition(index);
+    return {
+      ...fish,
+      x: position.x,
+      y: position.y,
+      direction: position.direction
+    };
+  });
+}
+
 function renderTanks() {
-  for (let i = 0; i < tanks.small.length; i++) {
-    const tankEl = document.getElementById(`small-tank-${i}`);
-    const fish = normalizeTankFishRecord(tanks.small[i]);
+  const fishRecords = aquariumFish.map(normalizeTankFishRecord);
 
-    if (fish) {
-      tankEl.innerHTML = `
-        <button class="fish-single fish-history-trigger" type="button" data-tank-type="small" data-tank-index="${i}" aria-label="${getTankFishLabel(fish)}">
-          <img src="${fish.image}" alt="${fish.name}" class="tank-fish-img single-img">
-        </button>
-      `;
-    } else {
-      tankEl.innerHTML = `<div class="tank-empty"></div>`;
+  aquariumEmptyState.hidden = fishRecords.length > 0;
+  aquariumStage.querySelectorAll(".aquarium-fish").forEach((fishEl) => fishEl.remove());
+
+  fishRecords.forEach((fish, index) => {
+    const fishButton = document.createElement("button");
+    fishButton.className = `aquarium-fish fish-history-trigger ${fish.size === "small" ? "aquarium-fish-small" : "aquarium-fish-medium"}`;
+    fishButton.type = "button";
+    fishButton.dataset.fishIndex = String(index);
+    fishButton.style.left = `${fish.x}%`;
+    fishButton.style.top = `${fish.y}%`;
+    fishButton.style.setProperty("--swim-delay", `${(index % 6) * 0.35}s`);
+    fishButton.setAttribute("aria-label", getTankFishLabel(fish));
+
+    if (fish.direction === "left") {
+      fishButton.classList.add("swim-left");
     }
-  }
 
-  for (let i = 0; i < tanks.large.length; i++) {
-    const tankEl = document.getElementById(`large-tank-${i}`);
-    const fishGroup = tanks.large[i];
-
-    if (fishGroup.length > 0) {
-      tankEl.innerHTML = `
-        <div class="fish-group">
-          ${fishGroup.map((entry, fishIndex) => {
-            const fish = normalizeTankFishRecord(entry);
-            return `
-            <button class="fish-group-item fish-history-trigger" type="button" data-tank-type="large" data-tank-index="${i}" data-fish-index="${fishIndex}" aria-label="${getTankFishLabel(fish)}">
-              <img src="${fish.image}" alt="${fish.name}" class="tank-fish-img group-img">
-            </button>
-          `;
-          }).join("")}
-        </div>
-      `;
-    } else {
-      tankEl.innerHTML = `<div class="tank-empty"></div>`;
-    }
-  }
+    fishButton.innerHTML = `<img src="${fish.image}" alt="${fish.name}" class="aquarium-fish-img">`;
+    aquariumStage.appendChild(fishButton);
+  });
 }
 
-function getTankCapacity() {
-  return tanks.small.length + tanks.large.length;
+function getAquariumFishCount() {
+  return aquariumFish.length;
 }
 
-function getFilledTankCount() {
-  const filledSmallTanks = tanks.small.filter(Boolean).length;
-  const filledLargeTanks = tanks.large.filter((fishGroup) => fishGroup.length > 0).length;
-  return filledSmallTanks + filledLargeTanks;
+function getUniqueCollectedFishCount() {
+  const uniqueIds = new Set(aquariumFish.map((fish) => normalizeTankFishRecord(fish).fishId));
+  return uniqueIds.size;
 }
 
 function getTotalCollectedFishCount() {
-  return getFilledTankCount();
+  return getAquariumFishCount();
 }
 
 function getTodaySessions() {
@@ -371,28 +390,16 @@ function renderTankStats() {
   const todayMinutes = todaySessions.reduce((total, session) => {
     return total + Number(session.durationMinutes || 0);
   }, 0);
-  const filledTankCount = getFilledTankCount();
 
   todaySessionsStat.textContent = String(todaySessions.length);
   todayMinutesStat.textContent = String(todayMinutes);
   totalFishStat.textContent = String(getTotalCollectedFishCount());
-  tankCapacityStat.textContent = `${filledTankCount}/${getTankCapacity()}`;
+  tankCapacityStat.textContent = `${getUniqueCollectedFishCount()}种`;
 }
 
 function getTankFishByTrigger(trigger) {
-  const tankType = trigger.dataset.tankType;
-  const tankIndex = Number(trigger.dataset.tankIndex);
-
-  if (tankType === "small") {
-    return normalizeTankFishRecord(tanks.small[tankIndex]);
-  }
-
-  if (tankType === "large") {
-    const fishIndex = Number(trigger.dataset.fishIndex);
-    return normalizeTankFishRecord(tanks.large[tankIndex][fishIndex]);
-  }
-
-  return null;
+  const fishIndex = Number(trigger.dataset.fishIndex);
+  return normalizeTankFishRecord(aquariumFish[fishIndex]);
 }
 
 function formatFishHistoryDate(earnedAt) {
@@ -442,6 +449,7 @@ function hideFishHistory() {
 function saveGameData() {
   localStorage.setItem("collectedFishIds", JSON.stringify(collectedFishIds));
   localStorage.setItem("tanks", JSON.stringify(tanks));
+  localStorage.setItem("aquariumFish", JSON.stringify(aquariumFish));
   localStorage.setItem("sessionHistory", JSON.stringify(sessionHistory));
   localStorage.setItem("hasClaimedToday", JSON.stringify(hasClaimedToday));
   localStorage.setItem("lastClaimDate", lastClaimDate);
@@ -450,6 +458,7 @@ function saveGameData() {
 function loadGameData() {
   const savedCollectedFishIds = localStorage.getItem("collectedFishIds");
   const savedTanks = localStorage.getItem("tanks");
+  const savedAquariumFish = localStorage.getItem("aquariumFish");
   const savedSessionHistory = localStorage.getItem("sessionHistory");
   const savedHasClaimedToday = localStorage.getItem("hasClaimedToday");
   const savedLastClaimDate = localStorage.getItem("lastClaimDate");
@@ -460,6 +469,10 @@ function loadGameData() {
 
   if (savedTanks) {
     tanks = JSON.parse(savedTanks);
+  }
+
+  if (savedAquariumFish) {
+    aquariumFish = JSON.parse(savedAquariumFish);
   }
 
   if (savedSessionHistory) {
@@ -594,6 +607,7 @@ placeFishBtn.addEventListener("click", claimRewardFish);
 loadGameData();
 resetDailyStatusIfNeeded();
 timeLeft = selectedDurationSeconds;
+migrateTanksToAquariumFish();
 renderTanks();
 renderTankStats();
 saveGameData();
