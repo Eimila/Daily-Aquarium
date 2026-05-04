@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>认养一条鱼｜15分钟鱼缸</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+
+    <!-- Page 1 欢迎页 -->
+    <section id="page-welcome" class="page active welcome-page">
+      <div class="page-content">
+        <h1 class="main-title">专注15分钟，认养一条鱼</h1>
+        <p class="sub-text">点击任意地方开启</p>
+      </div>
+    </section>
+
+    <!-- Page 2 输入页 -->
+    <section id="page-input" class="page input-page">
+      <div class="page-content card">
+        <input
+          id="taskInput"
+          class="task-input"
+          type="text"
+          placeholder="在此输入专注内容，例如看书、洗澡、小憩"
+        />
+        <p class="time-text">15分钟</p>
+        <button id="startBtn" class="primary-btn">开始</button>
+      </div>
+    </section>
+
+    <!-- Page 3 计时页 -->
+    <section id="page-timer" class="page timer-page">
+      <div class="page-content">
+        <p id="timerTaskText" class="timer-task"></p>
+        <h2 id="timerDisplay" class="timer-display">15:00</h2>
+        <p class="timer-tip">小鱼溯游中</p>
+      </div>
+    </section>
+
+    <!-- Page 4 获得鱼页 -->
+    <section id="page-reward" class="page reward-page">
+      <div class="page-content reward-card">
+        <p class="reward-title">恭喜你获得了一条鱼</p>
+        <div id="rewardFishImage" class="reward-fish">🐟</div>
+        <h3 id="rewardFishName" class="reward-fish-name">孔雀鱼</h3>
+        <p id="rewardFishDesc" class="reward-fish-desc">
+          小小一只，却总把尾巴撑得很认真。
+        </p>
+        <p class="reward-tip">点击任意地方将鱼放入鱼缸</p>
+      </div>
+    </section>
+
+    <!-- Page 5 入缸完成页 -->
+    <section id="page-tank" class="page tank-page">
+      <div class="top-icons">
+        <button class="icon-btn" aria-label="声音">🔊</button>
+        <button class="icon-btn" aria-label="分享">📤</button>
+      </div>
+
+      <div class="page-content">
+       <div class="tank-room">
+         <div id="small-tank-0" class="tank small-tank">小缸 1</div>
+         <div id="small-tank-1" class="tank small-tank">小缸 2</div>
+         <div id="small-tank-2" class="tank small-tank">小缸 3</div>
+         <div id="small-tank-3" class="tank small-tank">小缸 4</div>
+         <div id="small-tank-4" class="tank small-tank">小缸 5</div>
+         <div id="small-tank-5" class="tank small-tank">小缸 6</div>
+
+         <div id="large-tank-0" class="tank large-tank">大缸 1</div>
+         <div id="large-tank-1" class="tank large-tank">大缸 2</div>
+         <div id="large-tank-2" class="tank large-tank">大缸 3</div>
+     </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
