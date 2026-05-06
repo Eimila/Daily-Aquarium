@@ -2,38 +2,48 @@ const fishList = [
   {
     id: "guppy",
     name: "孔雀鱼",
+    nameEn: "Guppy",
     type: "single",
     image: "./assets/fish/guppy.png",
-    description: "小小一只，却总把尾巴撑得很认真。"
+    description: "小小一只，却总把尾巴撑得很认真。",
+    descriptionEn: "Tiny, bright, and always swimming with a very serious tail."
   },
   {
     id: "betta",
     name: "斗鱼",
+    nameEn: "Betta",
     type: "single",
     image: "./assets/fish/betta.png",
-    description: "看起来有点骄傲，其实只是想把裙摆整理好。"
+    description: "看起来有点骄傲，其实只是想把裙摆整理好。",
+    descriptionEn: "It looks a little proud, but maybe it is just arranging its fins."
   },
   {
     id: "goldfish",
     name: "金鱼",
+    nameEn: "Goldfish",
     type: "single",
     image: "./assets/fish/goldfish.png",
-    description: "圆圆的，慢慢的，像把时间也一起游慢了。"
+    description: "圆圆的，慢慢的，像把时间也一起游慢了。",
+    descriptionEn: "Round and slow, as if it has learned how to soften time."
   },
 
   {
     id: "neon-tetra",
     name: "霓虹灯鱼",
+    nameEn: "Neon Tetra",
     type: "group",
     image: "./assets/fish/neon-tetra.png",
-    description: "身上那一道蓝光，像把夜晚偷偷装进了水里。"
+    description: "身上那一道蓝光，像把夜晚偷偷装进了水里。",
+    descriptionEn: "That blue glow looks like a quiet piece of night inside the water."
   },
   {
     id: "white-cloud",
     name: "白云金丝",
+    nameEn: "White Cloud",
     type: "group",
     image: "./assets/fish/white-cloud.png",
-    description: "名字里有云，游起来也真的轻轻的。"
+    description: "名字里有云，游起来也真的轻轻的。",
+    descriptionEn: "With cloud in its name, it really does swim like a small breeze."
   }
 ];
 
@@ -57,9 +67,12 @@ const startBtn = document.getElementById("startBtn");
 const timerTaskText = document.getElementById("timerTaskText");
 const timerDisplay = document.getElementById("timerDisplay");
 const enterAppBtn = document.getElementById("enterAppBtn");
+const languageToggleBtn = document.getElementById("languageToggleBtn");
 const inputMessage = document.getElementById("inputMessage");
 const timerTip = document.getElementById("timerTip");
 const focusAgainBtn = document.getElementById("focusAgainBtn");
+const soundBtn = document.getElementById("soundBtn");
+const shareBtn = document.getElementById("shareBtn");
 const durationButtons = document.querySelectorAll(".duration-btn");
 const pauseResumeBtn = document.getElementById("pauseResumeBtn");
 const resetBtn = document.getElementById("resetBtn");
@@ -79,14 +92,151 @@ const aquariumStage = document.getElementById("aquariumStage");
 const aquariumEmptyState = document.getElementById("aquariumEmptyState");
 const aquariumViewButtons = document.querySelectorAll(".aquarium-view-btn");
 const aquariumMonthSelect = document.getElementById("aquariumMonthSelect");
+const sessionsStatLabel = document.getElementById("sessionsStatLabel");
+const minutesStatLabel = document.getElementById("minutesStatLabel");
+const fishStatLabel = document.getElementById("fishStatLabel");
+const speciesStatLabel = document.getElementById("speciesStatLabel");
+const monthFilterLabel = document.getElementById("monthFilterLabel");
+const historyTaskLabel = document.getElementById("historyTaskLabel");
+const historyDateLabel = document.getElementById("historyDateLabel");
+const historyTimeLabel = document.getElementById("historyTimeLabel");
+const historyDurationLabel = document.getElementById("historyDurationLabel");
 const TEST_DURATION_SECONDS = 5;
-const focusMessages = {
-  emptyTask: "先写下一件小小的事吧，只要一件就好。",
-  running: "不用着急，小鱼正在安静地陪你游。",
-  paused: "先停一下也没关系，小鱼会陪你等一会儿。",
-  resumed: "欢迎回来，我们慢慢继续。",
-  resetConfirm: "小鱼会先在这里等你。要重新开始这次专注吗？",
-  resetDone: "没关系，准备好后再开始也很好。"
+const translations = {
+  zh: {
+    htmlLang: "zh-CN",
+    documentTitle: "认养一条鱼｜15分钟鱼缸",
+    languageButton: "English",
+    languageButtonAria: "Switch to English",
+    welcomeTitle: "专注15分钟，认养一条鱼",
+    enterApp: "开始认养",
+    inputTitle: "设置本次专注",
+    taskLabel: "本次专注目标",
+    taskPlaceholder: "在此输入专注内容，例如看书、洗澡、小憩",
+    timeText: "选择一段小鱼陪你的时间",
+    durationAria: "选择专注时长",
+    minuteShort: "分钟",
+    start: "开始",
+    timerControlsAria: "计时控制",
+    pause: "暂停",
+    resume: "继续",
+    reset: "重置",
+    rewardTitle: "恭喜你获得了一条鱼",
+    placeFish: "放入鱼缸",
+    focusAgain: "再次专注",
+    soundAria: "声音开关",
+    shareAria: "分享鱼缸",
+    tankTitle: "我的专注鱼缸",
+    statsAria: "专注统计",
+    sessionsStat: "专注次数",
+    minutesStat: "专注分钟",
+    fishStat: "收集小鱼",
+    speciesStat: "水族馆",
+    fishUnit: "条",
+    speciesUnit: "种",
+    aquariumRangeAria: "切换鱼缸时间范围",
+    aquariumStageAria: "水族馆中的小鱼",
+    monthLabel: "月份",
+    monthSelectAria: "选择月份",
+    viewLabels: {
+      today: "今日鱼缸",
+      week: "本周鱼缸",
+      month: "本月鱼缸",
+      year: "本年鱼缸"
+    },
+    monthNames: [
+      "1月", "2月", "3月", "4月", "5月", "6月",
+      "7月", "8月", "9月", "10月", "11月", "12月"
+    ],
+    currentMonthView: (month) => `${month}鱼缸`,
+    emptyAquarium: (viewLabel) => `${viewLabel}还很安静。完成一次专注后，小鱼会出现在这里。`,
+    historyCloseAria: "关闭",
+    historyLabel: "专注记录",
+    historyTask: "专注内容",
+    historyDate: "获得日期",
+    historyTime: "获得时间",
+    historyDuration: "专注时间",
+    noRecord: "暂无记录",
+    unknownFish: "未知小鱼",
+    unknownFishDesc: "这条小鱼还没有留下简介。",
+    historyButtonLabel: (fishName, task) => `查看${fishName}的专注记录${task ? `，来自 ${task}` : ""}`,
+    durationValue: (minutes) => `${minutes} 分钟`,
+    messages: {
+      emptyTask: "先写下一件小小的事吧，只要一件就好。",
+      running: "不用着急，小鱼正在安静地陪你游。",
+      paused: "先停一下也没关系，小鱼会陪你等一会儿。",
+      resumed: "欢迎回来，我们慢慢继续。",
+      resetConfirm: "小鱼会先在这里等你。要重新开始这次专注吗？",
+      resetDone: "没关系，准备好后再开始也很好。"
+    }
+  },
+  en: {
+    htmlLang: "en",
+    documentTitle: "Daily Aquarium | 15-Minute Focus Tank",
+    languageButton: "中文",
+    languageButtonAria: "切换到中文",
+    welcomeTitle: "Focus once, adopt a fish",
+    enterApp: "Start Focus",
+    inputTitle: "Set This Focus Session",
+    taskLabel: "Focus goal",
+    taskPlaceholder: "Enter one small goal, like reading, tidying, or resting",
+    timeText: "Choose how long the fish will keep you company",
+    durationAria: "Choose focus duration",
+    minuteShort: "min",
+    start: "Start",
+    timerControlsAria: "Timer controls",
+    pause: "Pause",
+    resume: "Resume",
+    reset: "Reset",
+    rewardTitle: "You earned a fish",
+    placeFish: "Place in Aquarium",
+    focusAgain: "Focus Again",
+    soundAria: "Sound toggle",
+    shareAria: "Share aquarium",
+    tankTitle: "My Focus Aquarium",
+    statsAria: "Focus stats",
+    sessionsStat: "Sessions",
+    minutesStat: "Minutes",
+    fishStat: "Fish",
+    speciesStat: "Aquarium",
+    fishUnit: "fish",
+    speciesUnit: "species",
+    aquariumRangeAria: "Switch aquarium time range",
+    aquariumStageAria: "Fish in the aquarium",
+    monthLabel: "Month",
+    monthSelectAria: "Choose month",
+    viewLabels: {
+      today: "Today",
+      week: "This Week",
+      month: "This Month",
+      year: "This Year"
+    },
+    monthNames: [
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ],
+    currentMonthView: (month) => `${month} Aquarium`,
+    emptyAquarium: (viewLabel) => `${viewLabel} is still quiet. Complete a focus session to add a fish here.`,
+    historyCloseAria: "Close",
+    historyLabel: "Focus Record",
+    historyTask: "Focus goal",
+    historyDate: "Date earned",
+    historyTime: "Time earned",
+    historyDuration: "Focus time",
+    noRecord: "No record yet",
+    unknownFish: "Unknown fish",
+    unknownFishDesc: "This fish does not have a description yet.",
+    historyButtonLabel: (fishName, task) => `View ${fishName}'s focus record${task ? ` from ${task}` : ""}`,
+    durationValue: (minutes) => `${minutes} min`,
+    messages: {
+      emptyTask: "Write down one small thing first. Just one is enough.",
+      running: "No rush. The fish is quietly swimming with you.",
+      paused: "Taking a pause is okay. The fish will wait with you.",
+      resumed: "Welcome back. Let's continue gently.",
+      resetConfirm: "The fish will wait here. Restart this focus session?",
+      resetDone: "That's okay. You can begin again when you're ready."
+    }
+  }
 };
 
 let currentTask = "";
@@ -109,11 +259,116 @@ let lastClaimDate = "";
 let lastFocusedElement = null;
 let aquariumViewMode = "today";
 let selectedAquariumMonth = new Date().getMonth();
+let currentLanguage = localStorage.getItem("dailyAquariumLanguage") || "zh";
+
+if (!translations[currentLanguage]) {
+  currentLanguage = "zh";
+}
+
+function getCopy() {
+  return translations[currentLanguage] || translations.zh;
+}
+
+function getMessages() {
+  return getCopy().messages;
+}
+
+function getFishName(fish) {
+  return currentLanguage === "en" ? (fish.nameEn || fish.name) : fish.name;
+}
+
+function getFishDescription(fish) {
+  return currentLanguage === "en" ? (fish.descriptionEn || fish.description) : fish.description;
+}
+
+function getFishDisplayText(entry) {
+  const fish = fishList.find((item) => item.id === (entry.fishId || entry.id));
+
+  if (fish) {
+    return {
+      name: getFishName(fish),
+      description: getFishDescription(fish)
+    };
+  }
+
+  return {
+    name: entry.name || getCopy().unknownFish,
+    description: entry.description || getCopy().unknownFishDesc
+  };
+}
 
 function showPage(pageName) {
   Object.values(pages).forEach((page) => page.classList.remove("active"));
   pages[pageName].classList.add("active");
 }
+
+function setElementText(id, text) {
+  const element = document.getElementById(id);
+  if (element) {
+    element.textContent = text;
+  }
+}
+
+function applyLanguage() {
+  const copy = getCopy();
+
+  document.documentElement.lang = copy.htmlLang;
+  document.title = copy.documentTitle;
+  languageToggleBtn.textContent = copy.languageButton;
+  languageToggleBtn.setAttribute("aria-label", copy.languageButtonAria);
+  setElementText("welcomeTitle", copy.welcomeTitle);
+  enterAppBtn.textContent = copy.enterApp;
+  setElementText("inputTitle", copy.inputTitle);
+  document.querySelector("label[for='taskInput']").textContent = copy.taskLabel;
+  taskInput.placeholder = copy.taskPlaceholder;
+  document.querySelector(".time-text").textContent = copy.timeText;
+  document.querySelector(".duration-options").setAttribute("aria-label", copy.durationAria);
+  durationButtons.forEach((button) => {
+    button.textContent = `${button.dataset.duration}${copy.minuteShort}`;
+  });
+  startBtn.textContent = copy.start;
+  document.querySelector(".timer-controls").setAttribute("aria-label", copy.timerControlsAria);
+  pauseResumeBtn.textContent = timerState === "paused" ? copy.resume : copy.pause;
+  resetBtn.textContent = copy.reset;
+  timerTip.textContent = timerState === "paused" ? copy.messages.paused : copy.messages.running;
+  setElementText("rewardFishName", currentRewardFish ? getFishName(currentRewardFish) : getFishName(fishList[0]));
+  setElementText("rewardFishDesc", currentRewardFish ? getFishDescription(currentRewardFish) : getFishDescription(fishList[0]));
+  document.querySelector(".reward-title").textContent = copy.rewardTitle;
+  placeFishBtn.textContent = copy.placeFish;
+  focusAgainBtn.textContent = copy.focusAgain;
+  soundBtn.setAttribute("aria-label", copy.soundAria);
+  shareBtn.setAttribute("aria-label", copy.shareAria);
+  setElementText("tankTitle", copy.tankTitle);
+  document.querySelector(".tank-stats").setAttribute("aria-label", copy.statsAria);
+  sessionsStatLabel.textContent = copy.sessionsStat;
+  minutesStatLabel.textContent = copy.minutesStat;
+  fishStatLabel.textContent = copy.fishStat;
+  speciesStatLabel.textContent = copy.speciesStat;
+  document.querySelector(".aquarium-view-controls").setAttribute("aria-label", copy.aquariumRangeAria);
+  aquariumStage.setAttribute("aria-label", copy.aquariumStageAria);
+  aquariumViewButtons.forEach((button) => {
+    button.textContent = copy.viewLabels[button.dataset.viewMode];
+  });
+  monthFilterLabel.textContent = copy.monthLabel;
+  aquariumMonthSelect.setAttribute("aria-label", copy.monthSelectAria);
+  setElementText("historyTaskLabel", copy.historyTask);
+  setElementText("historyDateLabel", copy.historyDate);
+  setElementText("historyTimeLabel", copy.historyTime);
+  setElementText("historyDurationLabel", copy.historyDuration);
+  document.querySelector(".history-label").textContent = copy.historyLabel;
+  closeFishHistoryBtn.setAttribute("aria-label", copy.historyCloseAria);
+  populateMonthFilter();
+  renderTanks();
+  renderTankStats();
+}
+
+languageToggleBtn.addEventListener("click", () => {
+  currentLanguage = currentLanguage === "zh" ? "en" : "zh";
+  localStorage.setItem("dailyAquariumLanguage", currentLanguage);
+  inputMessage.textContent = "";
+  timerTip.textContent = getMessages().running;
+  applyLanguage();
+});
 
 enterAppBtn.addEventListener("click", () => {
   showPage("input");
@@ -140,7 +395,7 @@ startBtn.addEventListener("click", () => {
   const value = taskInput.value.trim();
 
   if (!value) {
-    inputMessage.textContent = focusMessages.emptyTask;
+    inputMessage.textContent = getMessages().emptyTask;
     return;
   }
 
@@ -153,7 +408,7 @@ startBtn.addEventListener("click", () => {
   currentRewardFish = null;
   currentSessionRecord = null;
   inputMessage.textContent = "";
-  timerTip.textContent = focusMessages.running;
+  timerTip.textContent = getMessages().running;
   timerTaskText.textContent = currentTask;
   timeLeft = selectedDurationSeconds;
 
@@ -182,7 +437,7 @@ focusAgainBtn.addEventListener("click", () => {
   currentSessionRecord = null;
   taskInput.value = "";
   inputMessage.textContent = "";
-  timerTip.textContent = focusMessages.running;
+  timerTip.textContent = getMessages().running;
   timeLeft = selectedDurationSeconds;
   updateTimerDisplay();
   showPage("input");
@@ -235,10 +490,10 @@ function showRewardFish() {
   currentRewardFish = getRandomFish();
 
   rewardFishImage.innerHTML = `
-    <img src="${currentRewardFish.image}" alt="${currentRewardFish.name}" class="reward-fish-img">
+    <img src="${currentRewardFish.image}" alt="${getFishName(currentRewardFish)}" class="reward-fish-img">
   `;
-  rewardFishName.textContent = currentRewardFish.name;
-  rewardFishDesc.textContent = currentRewardFish.description;
+  rewardFishName.textContent = getFishName(currentRewardFish);
+  rewardFishDesc.textContent = getFishDescription(currentRewardFish);
 }
 
 function saveCompletedSession() {
@@ -261,9 +516,11 @@ function createTankFishRecord(fish) {
   return {
     fishId: fish.id,
     name: fish.name,
+    nameEn: fish.nameEn,
     type: fish.type,
     image: fish.image,
     description: fish.description,
+    descriptionEn: fish.descriptionEn,
     sessionId: currentSessionRecord ? currentSessionRecord.id : "",
     earnedAt: currentSessionRecord ? currentSessionRecord.date : new Date().toISOString(),
     durationMinutes: currentSessionRecord ? currentSessionRecord.durationMinutes : selectedDurationMinutes,
@@ -279,13 +536,16 @@ function normalizeTankFishRecord(entry) {
   if (!entry) return null;
 
   const fish = fishList.find((item) => item.id === (entry.fishId || entry.id));
+  const displayText = getFishDisplayText(entry);
 
   return {
     fishId: entry.fishId || entry.id,
-    name: entry.name || (fish ? fish.name : "未知小鱼"),
+    name: displayText.name,
+    nameEn: entry.nameEn || (fish ? fish.nameEn : ""),
     type: entry.type || (fish ? fish.type : "single"),
     image: entry.image || (fish ? fish.image : ""),
-    description: entry.description || (fish ? fish.description : "这条小鱼还没有留下简介。"),
+    description: displayText.description,
+    descriptionEn: entry.descriptionEn || (fish ? fish.descriptionEn : ""),
     sessionId: entry.sessionId || "",
     earnedAt: entry.earnedAt || entry.date || "",
     durationMinutes: entry.durationMinutes || "",
@@ -299,8 +559,7 @@ function normalizeTankFishRecord(entry) {
 
 function getTankFishLabel(entry) {
   const fish = normalizeTankFishRecord(entry);
-  const taskText = fish.task ? `，来自 ${fish.task}` : "";
-  return `查看${fish.name}的专注记录${taskText}`;
+  return getCopy().historyButtonLabel(fish.name, fish.task);
 }
 
 function getAquariumFishPosition(index) {
@@ -404,15 +663,14 @@ function getVisibleAquariumFish() {
 }
 
 function getAquariumViewLabel() {
-  const monthLabel = `${selectedAquariumMonth + 1}月`;
+  const copy = getCopy();
+  const monthLabel = copy.monthNames[selectedAquariumMonth];
   const labels = {
-    today: "今日鱼缸",
-    week: "本周鱼缸",
-    month: `${monthLabel}鱼缸`,
-    year: "本年鱼缸"
+    ...copy.viewLabels,
+    month: copy.currentMonthView(monthLabel)
   };
 
-  return labels[aquariumViewMode] || "当前鱼缸";
+  return labels[aquariumViewMode] || copy.viewLabels.today;
 }
 
 function updateMonthFilterState() {
@@ -420,10 +678,7 @@ function updateMonthFilterState() {
 }
 
 function populateMonthFilter() {
-  const monthNames = [
-    "1月", "2月", "3月", "4月", "5月", "6月",
-    "7月", "8月", "9月", "10月", "11月", "12月"
-  ];
+  const monthNames = getCopy().monthNames;
 
   aquariumMonthSelect.innerHTML = monthNames.map((monthName, index) => {
     return `<option value="${index}">${monthName}</option>`;
@@ -464,7 +719,7 @@ function renderTanks() {
   const fishRecords = getVisibleAquariumFish();
 
   aquariumEmptyState.hidden = fishRecords.length > 0;
-  aquariumEmptyState.textContent = `${getAquariumViewLabel()}还很安静。完成一次专注后，小鱼会出现在这里。`;
+  aquariumEmptyState.textContent = getCopy().emptyAquarium(getAquariumViewLabel());
   aquariumStage.querySelectorAll(".aquarium-fish").forEach((fishEl) => fishEl.remove());
 
   fishRecords.forEach((fish, index) => {
@@ -521,7 +776,7 @@ function renderTankStats() {
   todaySessionsStat.textContent = String(visibleSessions.length);
   todayMinutesStat.textContent = String(visibleMinutes);
   totalFishStat.textContent = String(getTotalCollectedFishCount());
-  tankCapacityStat.textContent = `${visibleUniqueIds.size}种`;
+  tankCapacityStat.textContent = `${visibleUniqueIds.size}${getCopy().speciesUnit}`;
 }
 
 function getTankFishByTrigger(trigger) {
@@ -530,17 +785,19 @@ function getTankFishByTrigger(trigger) {
 }
 
 function formatFishHistoryDate(earnedAt) {
-  if (!earnedAt) return { date: "暂无记录", time: "暂无记录" };
+  const copy = getCopy();
+
+  if (!earnedAt) return { date: copy.noRecord, time: copy.noRecord };
 
   const date = new Date(earnedAt);
 
   if (Number.isNaN(date.getTime())) {
-    return { date: "暂无记录", time: "暂无记录" };
+    return { date: copy.noRecord, time: copy.noRecord };
   }
 
   return {
-    date: date.toLocaleDateString("zh-CN"),
-    time: date.toLocaleTimeString("zh-CN", {
+    date: date.toLocaleDateString(copy.htmlLang),
+    time: date.toLocaleTimeString(copy.htmlLang, {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit"
@@ -554,10 +811,10 @@ function showFishHistory(fish) {
   lastFocusedElement = document.activeElement;
   fishHistoryTitle.textContent = fish.name;
   fishHistoryDesc.textContent = fish.description;
-  historyTask.textContent = fish.task || "暂无记录";
+  historyTask.textContent = fish.task || getCopy().noRecord;
   historyDate.textContent = history.date;
   historyTime.textContent = history.time;
-  historyDuration.textContent = fish.durationMinutes ? `${fish.durationMinutes} 分钟` : "暂无记录";
+  historyDuration.textContent = fish.durationMinutes ? getCopy().durationValue(fish.durationMinutes) : getCopy().noRecord;
 
   fishHistoryModal.classList.add("active");
   fishHistoryModal.setAttribute("aria-hidden", "false");
@@ -618,7 +875,7 @@ function loadGameData() {
 function startTimer() {
   clearInterval(timerId);
   timerState = "running";
-  pauseResumeBtn.textContent = "暂停";
+  pauseResumeBtn.textContent = getCopy().pause;
   updateTimerDisplay();
   runTimer();
 }
@@ -637,20 +894,20 @@ function runTimer() {
 function pauseTimer() {
   clearInterval(timerId);
   timerState = "paused";
-  pauseResumeBtn.textContent = "继续";
-  timerTip.textContent = focusMessages.paused;
+  pauseResumeBtn.textContent = getCopy().resume;
+  timerTip.textContent = getMessages().paused;
 }
 
 function resumeTimer() {
   clearInterval(timerId);
   timerState = "running";
-  pauseResumeBtn.textContent = "暂停";
-  timerTip.textContent = focusMessages.resumed;
+  pauseResumeBtn.textContent = getCopy().pause;
+  timerTip.textContent = getMessages().resumed;
   runTimer();
 }
 
 function resetTimer() {
-  if (!window.confirm(focusMessages.resetConfirm)) {
+  if (!window.confirm(getMessages().resetConfirm)) {
     return;
   }
 
@@ -659,9 +916,9 @@ function resetTimer() {
   timeLeft = selectedDurationSeconds;
   currentRewardFish = null;
   currentSessionRecord = null;
-  pauseResumeBtn.textContent = "暂停";
-  timerTip.textContent = focusMessages.running;
-  inputMessage.textContent = focusMessages.resetDone;
+  pauseResumeBtn.textContent = getCopy().pause;
+  timerTip.textContent = getMessages().running;
+  inputMessage.textContent = getMessages().resetDone;
   updateTimerDisplay();
   showPage("input");
   taskInput.focus();
@@ -735,9 +992,7 @@ loadGameData();
 resetDailyStatusIfNeeded();
 timeLeft = selectedDurationSeconds;
 migrateTanksToAquariumFish();
-populateMonthFilter();
-renderTanks();
-renderTankStats();
+applyLanguage();
 saveGameData();
 
 window.getDailyAquariumSessions = function () {

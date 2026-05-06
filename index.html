@@ -14,6 +14,7 @@
 
     <!-- Page 1 欢迎页 -->
     <section id="page-welcome" class="page active welcome-page" aria-labelledby="welcomeTitle">
+      <button id="languageToggleBtn" class="language-toggle-btn" type="button" aria-label="Switch to English">English</button>
       <div class="page-content">
         <h1 id="welcomeTitle" class="main-title">专注15分钟，认养一条鱼</h1>
         <button id="enterAppBtn" class="welcome-start-btn" type="button">开始认养</button>
@@ -74,27 +75,27 @@
     <section id="page-tank" class="page tank-page" aria-labelledby="tankTitle">
       <div class="top-icons">
         <button id="focusAgainBtn" class="return-focus-btn" type="button">再次专注</button>
-        <button class="icon-btn" type="button" aria-label="声音开关">🔊</button>
-        <button class="icon-btn" type="button" aria-label="分享鱼缸">📤</button>
+        <button id="soundBtn" class="icon-btn" type="button" aria-label="声音开关">🔊</button>
+        <button id="shareBtn" class="icon-btn" type="button" aria-label="分享鱼缸">📤</button>
       </div>
 
       <div class="page-content">
         <h2 id="tankTitle" class="sr-only">我的专注鱼缸</h2>
         <div class="tank-stats" aria-label="专注统计">
           <div class="stat-item">
-            <span class="stat-label">专注次数</span>
+            <span id="sessionsStatLabel" class="stat-label">专注次数</span>
             <strong id="todaySessionsStat" class="stat-value" aria-live="polite">0</strong>
           </div>
           <div class="stat-item">
-            <span class="stat-label">专注分钟</span>
+            <span id="minutesStatLabel" class="stat-label">专注分钟</span>
             <strong id="todayMinutesStat" class="stat-value" aria-live="polite">0</strong>
           </div>
           <div class="stat-item">
-            <span class="stat-label">收集小鱼</span>
+            <span id="fishStatLabel" class="stat-label">收集小鱼</span>
             <strong id="totalFishStat" class="stat-value" aria-live="polite">0</strong>
           </div>
           <div class="stat-item">
-            <span class="stat-label">水族馆</span>
+            <span id="speciesStatLabel" class="stat-label">水族馆</span>
             <strong id="tankCapacityStat" class="stat-value" aria-live="polite">0条</strong>
           </div>
         </div>
@@ -105,7 +106,7 @@
           <button class="aquarium-view-btn" type="button" data-view-mode="month" aria-pressed="false">本月鱼缸</button>
           <button class="aquarium-view-btn" type="button" data-view-mode="year" aria-pressed="false">本年鱼缸</button>
           <label class="month-filter-label" for="aquariumMonthSelect">
-            <span>月份</span>
+            <span id="monthFilterLabel">月份</span>
             <select id="aquariumMonthSelect" class="month-filter-select" aria-label="选择月份"></select>
           </label>
         </div>
@@ -123,19 +124,19 @@
           <p id="fishHistoryDesc" class="history-desc"></p>
           <dl class="history-list">
             <div>
-              <dt>专注内容</dt>
+              <dt id="historyTaskLabel">专注内容</dt>
               <dd id="historyTask"></dd>
             </div>
             <div>
-              <dt>获得日期</dt>
+              <dt id="historyDateLabel">获得日期</dt>
               <dd id="historyDate"></dd>
             </div>
             <div>
-              <dt>获得时间</dt>
+              <dt id="historyTimeLabel">获得时间</dt>
               <dd id="historyTime"></dd>
             </div>
             <div>
-              <dt>专注时间</dt>
+              <dt id="historyDurationLabel">专注时间</dt>
               <dd id="historyDuration"></dd>
             </div>
           </dl>

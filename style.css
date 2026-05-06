@@ -68,6 +68,7 @@ body {
 .primary-btn,
 .welcome-start-btn,
 .reward-place-btn,
+.language-toggle-btn,
 .duration-btn,
 .timer-btn,
 .return-focus-btn,
@@ -133,6 +134,29 @@ body {
 .welcome-start-btn:hover,
 .welcome-start-btn:focus-visible {
   transform: translateY(1px);
+}
+
+.language-toggle-btn {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  z-index: 5;
+  min-width: 96px;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 250, 242, 0.86);
+  color: var(--wood-dark);
+  cursor: pointer;
+  padding: 12px 14px;
+  box-shadow:
+    6px 6px 0 rgba(95, 63, 43, 0.12),
+    0 6px 16px rgba(70, 50, 30, 0.08);
+  font-size: 0.62rem;
+  line-height: 1.8;
+}
+
+.language-toggle-btn:hover {
+  transform: translateY(-1px);
 }
 
 /* ===== 面板 ===== */
